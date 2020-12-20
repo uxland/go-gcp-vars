@@ -7,11 +7,12 @@ import (
 	"os"
 	"path"
 )
+
 type GCPVars struct {
-	ProjectId string
+	ProjectId   string
 	ServiceName string
-	Port string
-	Debug bool
+	Port        string
+	Debug       bool
 }
 
 func init() {
@@ -52,7 +53,7 @@ func GetGCPVars() *GCPVars {
 	service := os.Getenv("K_SERVICE")
 	if service == "" {
 		service = os.Getenv("GAE_SERVICE")
-		if service == ""{
+		if service == "" {
 			service = "???"
 		}
 
@@ -63,7 +64,7 @@ func GetGCPVars() *GCPVars {
 		revision = "???"
 	}
 
-	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := ""
 
 	// Environment variable GOOGLE_CLOUD_PROJECT is only set locally.
 	// On Cloud Run, strip the timestamp prefix from log entries.
@@ -79,21 +80,21 @@ func GetGCPVars() *GCPVars {
 			log.Printf("metadata.ProjectID: Cloud Run metadata server: %v", err)
 		}
 		var ip string
-		if ip, err = metadata.InternalIP(); err == nil{
+		if ip, err = metadata.InternalIP(); err == nil {
 			log.Printf("internal IP: %s\n", ip)
 		}
-		if ip, err = metadata.ExternalIP(); err == nil{
+		if ip, err = metadata.ExternalIP(); err == nil {
 			log.Printf("external IP: %s\n", ip)
 		}
 	}
 	if project == "" {
-		project = "???"
+		project = os.Getenv("GOOGLE_CLOUD_PROJECT")
 	}
-	port := os.Getenv("")
+	port := os.Getenv("PORT")
 	return &GCPVars{
 		ProjectId:   project,
 		ServiceName: service,
 		Port:        port,
-		Debug:  len(os.Getenv("DEBUG")) > 0,
+		Debug:       len(os.Getenv("DEBUG")) > 0,
 	}
 }
