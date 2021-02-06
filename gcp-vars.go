@@ -1,7 +1,6 @@
 package go_gcp_vars
 
 import (
-	"cloud.google.com/go/compute/metadata"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
@@ -72,21 +71,6 @@ func GetGCPVars() *GCPVars {
 		log.SetFlags(0)
 	}
 
-	// Only attempt to check the Cloud Run metadata server if it looks like
-	// the service is deployed to Cloud Run or GOOGLE_CLOUD_PROJECT not already set.
-	if project == "" || service != "???" {
-		var err error
-		if project, err = metadata.ProjectID(); err != nil {
-			log.Printf("metadata.ProjectID: Cloud Run metadata server: %v", err)
-		}
-		var ip string
-		if ip, err = metadata.InternalIP(); err == nil {
-			log.Printf("internal IP: %s\n", ip)
-		}
-		if ip, err = metadata.ExternalIP(); err == nil {
-			log.Printf("external IP: %s\n", ip)
-		}
-	}
 	if project == "" {
 		project = os.Getenv("GOOGLE_CLOUD_PROJECT")
 	}
